@@ -27,6 +27,7 @@ Write-Host "Server: $server"
 #$partids = $arr -join ', '
 #$partids
 $name = "trsuccess,trcomapny,trcorporation,trsomething,hello"
+$name.GetType().FullName
 #Write-Host "##vso[task.setvariable variable=mypartids;]$partids"
 Write-Host "##vso[task.setvariable variable=StorageName;isOutput=true]$name"
 #Write-Host "##vso[task.setvariable variable=$groupVariableName;isOutput=true]$value"
