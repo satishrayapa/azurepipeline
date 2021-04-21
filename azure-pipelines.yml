@@ -5,121 +5,43 @@
 
 name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
+
 trigger:
-- develop
-- release/*
+  branches:
+    include:
+    - feature/sathishk
+    exclude:
+    - master
+pool: 'AWS OGT Non-Prod Pool'
+
+variables:
+  - group: partnerid-variables-test
+
 
 jobs:
-- job: setVersion
-  displayName: Set Major and Minor
-  pool:
-    vmImage: 'windows-latest'
-  variables:
-  - group: common-variables
-  - name: major
-    value: $(latest.major)
-  - name: minor
-    value: $(latest.minor)
+- job: getpartneridsjob
   steps:
   - task: PowerShell@2
-    name: setvar
+    name: partneridstask
     inputs:
-      filePath: '.\setversion.ps1'
+      targetType: 'filePath'    
+      filePath: 'Database/aws-partner-create-test-test.ps1'
+      arguments: -server $(sql.server) -database SEC_DEV -credSecretId $(sql.dbcreator.secret.id) -sqlPath Application -repair -outoforder -EngineType MSSQL
+      errorActionPreference: 'stop'
 
-- job: build
-  displayName: Run the rest of the build
-  dependsOn: setVersion
-  pool:
-    vmImage: 'windows-latest'
-  variables:
-  - group: common-variables
-  - group: build-variables
-  - name: major
-    value: $[ dependencies.setVersion.outputs['setvar.major'] ]
-  - name: minor
-    value: $[ dependencies.setVersion.outputs['setvar.minor'] ]
-  - name: revision
-    # revision counter is automatically incremented by one in each execution of pipeline
-    # second parameter is seed value to reset to every time the referenced variable is changed
-    value: $[counter(dependencies.setVersion.outputs['setvar.revCounterName'], 0)]
-  - name: versionNumber
-    value: $(major).$(minor).0.0
-  - name: fileVersionNumber
-    value: $(major).$(minor).$(revision).0
-  - name: packageVersion
-    value: $(major).$(minor).$(revision)
-  - name: packageOutputPath
-    value: $(Build.ArtifactStagingDirectory)/packages
-  - name: outputPath
-    value: bin/$(buildConfiguration)
+- job: partnerdb
+  displayName: 'partnerdbjob'
+  dependsOn: getpartneridsjob
+  variables: 
+      some: $[ dependencies.getpartneridsjob.outputs['partneridstask.name'] ]
+      #some: "hello"
+
 
   steps:
   - task: PowerShell@2
-    name: setBuildName
+    displayName: 'partneridstask'
     inputs:
-      filePath: '.\setbuildname.ps1'
-
-  - task: NuGetToolInstaller@1
-    displayName: Install NuGet Tool
-
-  - task: NuGetCommand@2
-    displayName: Restore NuGet Packages
-    inputs:
-      command: 'restore'
-      restoreSolution: '$(solution)'
-      feedsToUse: 'select'
-      vstsFeed: 'a818d6da-f917-4eb0-bef1-c4c4780de3d1'
-
-  - task: Assembly-Info-NetFramework@2
-    displayName: Set Assembly Version
-    inputs:
-      Path: '$(Build.SourcesDirectory)'
-      FileNames: |
-        **\AssemblyInfo.cs
-        **\AssemblyInfo.vb
-      InsertAttributes: true
-      FileEncoding: 'auto'
-      WriteBOM: false
-      VersionNumber: '$(versionNumber)'
-      FileVersionNumber: '$(fileVersionNumber)'
-
-  - task: VSBuild@1
-    displayName: Build Solution
-    inputs:
-      solution: '$(solution)'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-
-  - task: VSTest@2
-    displayName: Run Unit Tests
-    inputs:
-      testSelector: 'testAssemblies'
-      testAssemblyVer2: |
-        **\*.tests.dll
-        !**\*TestAdapter.dll
-        !**\obj\**
-      searchFolder: '$(System.DefaultWorkingDirectory)'
-      platform: '$(buildPlatform)'
-      configuration: '$(buildConfiguration)'
-    enabled: true
-
-  # COPY BUILD OUTPUT ARTIFACTS
-  - task: DeleteFiles@1
-    inputs:
-      SourceFolder: '$(Build.SourcesDirectory)/Database/flyway/drivers'
-      Contents: '!(mssql*.jar)'
-      
-  - task: CopyFiles@2
-    displayName: 'Copy Database Folder'
-    inputs:
-      sourceFolder: '$(Build.SourcesDirectory)/Database'
-      contents: |
-        **/*
-        !Templates/**/*
-      TargetFolder: '$(Build.ArtifactStagingDirectory)/GTMSQL'
-
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Database Scripts'
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)/GTMSQL'
-      artifactName: GTMSQL
+      targetType: 'filePath'    
+      filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
+      arguments: -Veriable $(some)
+      errorActionPreference: 'stop'
