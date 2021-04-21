@@ -37,7 +37,7 @@ jobs:
       #some: "hello"
   strategy:
     matrix:
-      ${{each id in variables.$(StorageName)}}:
+      - ${{each id in variables.$(StorageName)}}:
         PYTHON_VERSION: ${{ id }}
 
       #Python35:
