@@ -5,90 +5,95 @@
 
 
 
-# pool:
-#   vmImage: 'windows-latest'
-
-
-# variables:
-#   - group: partnerid-variables-test
-
-
-# jobs:
-# - job: getpartneridsjob
-#   steps:
-#   - task: PowerShell@2
-#     name: partneridstask
-#     inputs:
-#       targetType: 'filePath'    
-#       filePath: 'Database/aws-partner-create-test-test.ps1'
-#       arguments: -server $(sql.server)
-#       errorActionPreference: 'stop'
-
-# - job: partnerdb
-#   displayName: 'partnerdbjob'
-#   dependsOn: getpartneridsjob
-#   variables: 
-#       some: $[ dependencies.getpartneridsjob.outputs['partneridstask.name'] ]
-#       #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
-#       DeployResourceGroupName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.DeployResourceGroupName'] ]
-
-
-#       #some: "hello"
-
-
-#   steps:
-#   - task: PowerShell@2
-#     displayName: 'partneridstask'
-#     inputs:
-#       targetType: 'filePath'    
-#       filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
-#       arguments: -Veriable $(some)
-#       errorActionPreference: 'stop'
-
-
-
-
 pool:
   vmImage: 'windows-latest'
+
 
 variables:
   - group: partnerid-variables-test
 
-jobs:
-- job: PrepareEnvironmentJob
-  steps:
 
+jobs:
+- job: GetpartneridsJob
+  steps:
   - task: PowerShell@2
-    name: PrepCicd
+    name: PartneridStask
     displayName: 'Configure variables to be used throughout the build pipeline (this yaml script).'
     inputs:
-      targetType: 'filePath'
-      arguments: -server $(sql.server)
-      #arguments: '-PipelineStackName $(PipelineStackName) -VariableArray DeployResourceGroupName,DeployStackName,DeployLocation,SiteNames,AppSku,AllowedIPAddresses,BuildOnly,AppDataSource,AppDatabase,AppUserId,AppUserPassword,AppConnectionTimeoutInSeconds,StorageName,ContainerName,DatabaseName,DatabaseServer'
-      #filePath: 'deployment\Prepcicd.ps1'
+      targetType: 'filePath'    
       filePath: 'Database/aws-partner-create-test-test.ps1'
+      arguments: -server $(sql.server)
       errorActionPreference: 'stop'
-  
 
-- job: DeployEnvironmentJob
-  dependsOn: PrepareEnvironmentJob
-  variables:
-    StorageName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.StorageName'] ]
-    #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
-  
+- job: PartnerDb
+  #displayName: 'partnerdbjob'
+  dependsOn: GetpartneridsJob
+  variables: 
+      StorageName: $[ dependencies.GetpartneridsJob.outputs['PartneridStask.name'] ]
+      #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
+      #DeployResourceGroupName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.DeployResourceGroupName'] ]
+
+
+      #some: "hello"
+
+
   steps:
-  
   - task: PowerShell@2
-    displayName: 'hellodisplay'
-    name: "hellojob" # This will allow us to reference the output of this task somewhere else.
+    #displayName: 'hellodisplay'
+    name: "hellojob" 
+    displayName: 'partneridstask'
     inputs:
-      targetType: 'filePath'
+      targetType: 'filePath'    
+      filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
       arguments: >-
         -BuildOnly $(StorageName)
-      #filePath: 'BuildTestProject.ps1'
-      filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
-
+      #arguments: -Veriable $(some)
       errorActionPreference: 'stop'
+
+
+#       ==========================================================================================
+
+# pool:
+#   vmImage: 'windows-latest'
+
+# variables:
+#   - group: partnerid-variables-test
+
+# jobs:
+# - job: PrepareEnvironmentJob
+#   steps:
+
+#   - task: PowerShell@2
+#     name: PrepCicd
+#     displayName: 'Configure variables to be used throughout the build pipeline (this yaml script).'
+#     inputs:
+#       targetType: 'filePath'
+#       arguments: -server $(sql.server)
+#       #arguments: '-PipelineStackName $(PipelineStackName) -VariableArray DeployResourceGroupName,DeployStackName,DeployLocation,SiteNames,AppSku,AllowedIPAddresses,BuildOnly,AppDataSource,AppDatabase,AppUserId,AppUserPassword,AppConnectionTimeoutInSeconds,StorageName,ContainerName,DatabaseName,DatabaseServer'
+#       #filePath: 'deployment\Prepcicd.ps1'
+#       filePath: 'Database/aws-partner-create-test-test.ps1'
+#       errorActionPreference: 'stop'
+  
+
+# - job: DeployEnvironmentJob
+#   dependsOn: PrepareEnvironmentJob
+#   variables:
+#     StorageName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.StorageName'] ]
+#     #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
+  
+#   steps:
+  
+#   - task: PowerShell@2
+#     displayName: 'hellodisplay'
+#     name: "hellojob" # This will allow us to reference the output of this task somewhere else.
+#     inputs:
+#       targetType: 'filePath'
+#       arguments: >-
+#         -BuildOnly $(StorageName)
+#       #filePath: 'BuildTestProject.ps1'
+#       filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
+
+#       errorActionPreference: 'stop'
 
 
 
