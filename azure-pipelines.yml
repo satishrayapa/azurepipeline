@@ -1,45 +1,98 @@
-# .NET Desktop
-# Build and run tests for .NET Desktop or Windows classic desktop solutions.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+# # .NET Desktop
+# # Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# # Add steps that publish symbols, save build artifacts, and more:
+# # https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
 
-name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+
+# pool:
+#   vmImage: 'windows-latest'
+
+
+# variables:
+#   - group: partnerid-variables-test
+
+
+# jobs:
+# - job: getpartneridsjob
+#   steps:
+#   - task: PowerShell@2
+#     name: partneridstask
+#     inputs:
+#       targetType: 'filePath'    
+#       filePath: 'Database/aws-partner-create-test-test.ps1'
+#       arguments: -server $(sql.server)
+#       errorActionPreference: 'stop'
+
+# - job: partnerdb
+#   displayName: 'partnerdbjob'
+#   dependsOn: getpartneridsjob
+#   variables: 
+#       some: $[ dependencies.getpartneridsjob.outputs['partneridstask.name'] ]
+#       #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
+#       DeployResourceGroupName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.DeployResourceGroupName'] ]
+
+
+#       #some: "hello"
+
+
+#   steps:
+#   - task: PowerShell@2
+#     displayName: 'partneridstask'
+#     inputs:
+#       targetType: 'filePath'    
+#       filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
+#       arguments: -Veriable $(some)
+#       errorActionPreference: 'stop'
+
+
 
 
 pool:
   vmImage: 'windows-latest'
 
-
 variables:
   - group: partnerid-variables-test
 
-
 jobs:
-- job: getpartneridsjob
+- job: PrepareEnvironmentJob
   steps:
+
   - task: PowerShell@2
-    name: partneridstask
+    name: PrepCicd
+    displayName: 'Configure variables to be used throughout the build pipeline (this yaml script).'
     inputs:
-      targetType: 'filePath'    
-      filePath: 'Database/aws-partner-create-test-test.ps1'
+      targetType: 'filePath'
       arguments: -server $(sql.server)
+      #arguments: '-PipelineStackName $(PipelineStackName) -VariableArray DeployResourceGroupName,DeployStackName,DeployLocation,SiteNames,AppSku,AllowedIPAddresses,BuildOnly,AppDataSource,AppDatabase,AppUserId,AppUserPassword,AppConnectionTimeoutInSeconds,StorageName,ContainerName,DatabaseName,DatabaseServer'
+      #filePath: 'deployment\Prepcicd.ps1'
+      filePath: 'Database/aws-partner-create-test-test.ps1'
       errorActionPreference: 'stop'
+  
 
-- job: partnerdb
-  displayName: 'partnerdbjob'
-  dependsOn: getpartneridsjob
-  variables: 
-      some: $[ dependencies.getpartneridsjob.outputs['partneridstask.name'] ]
-      #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
-
-      #some: "hello"
-
-
+- job: DeployEnvironmentJob
+  dependsOn: PrepareEnvironmentJob
+  variables:
+    StorageName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.StorageName'] ]
+    #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
+  
   steps:
+  
   - task: PowerShell@2
-    displayName: 'partneridstask'
+    displayName: 'hellodisplay'
+    name: "hellojob" # This will allow us to reference the output of this task somewhere else.
     inputs:
-      targetType: 'filePath'    
+      targetType: 'filePath'
+      arguments: >-
+        -BuildOnly $(StorageName)
+      #filePath: 'BuildTestProject.ps1'
       filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
-      arguments: -Veriable $(some)
+
       errorActionPreference: 'stop'
+
+
+
+
+
+
+    
