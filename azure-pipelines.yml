@@ -35,6 +35,8 @@ jobs:
 
 
       #some: "hello"
+  strategy:
+      parallel: 2
 
 
   steps:
