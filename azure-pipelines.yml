@@ -36,8 +36,15 @@ jobs:
 
       #some: "hello"
   strategy:
-    maxParallel: 2
+    matrix:
+      ${{each id in variables.$(StorageName)}}:
+        PYTHON_VERSION: ${{ id }}
 
+      #Python35:
+        #PYTHON_VERSION: '3.5'
+      #Python36:
+        #PYTHON_VERSION: '3.6'
+    maxParallel: 2
 
   steps:
   - task: PowerShell@2
