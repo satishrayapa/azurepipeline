@@ -29,7 +29,7 @@ jobs:
   #displayName: 'partnerdbjob'
   dependsOn: GetpartneridsJob
   variables: 
-      StorageName: $[ dependencies.GetpartneridsJob.outputs['PartneridStask.name'] ]
+      StorageName: $[ dependencies.GetpartneridsJob.outputs['PartneridStask.StorageName'] ]
       #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
       #DeployResourceGroupName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.DeployResourceGroupName'] ]
 
