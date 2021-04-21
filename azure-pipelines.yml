@@ -46,7 +46,7 @@ jobs:
       targetType: 'filePath'    
       filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
       arguments: >-
-        -BuildOnly $(StorageName)
+        -BuildOnly '$(StorageName)'
       #arguments: -Veriable $(some)
       errorActionPreference: 'stop'
 
