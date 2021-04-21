@@ -1,0 +1,125 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+trigger:
+- develop
+- release/*
+
+jobs:
+- job: setVersion
+  displayName: Set Major and Minor
+  pool:
+    vmImage: 'windows-latest'
+  variables:
+  - group: common-variables
+  - name: major
+    value: $(latest.major)
+  - name: minor
+    value: $(latest.minor)
+  steps:
+  - task: PowerShell@2
+    name: setvar
+    inputs:
+      filePath: '.\setversion.ps1'
+
+- job: build
+  displayName: Run the rest of the build
+  dependsOn: setVersion
+  pool:
+    vmImage: 'windows-latest'
+  variables:
+  - group: common-variables
+  - group: build-variables
+  - name: major
+    value: $[ dependencies.setVersion.outputs['setvar.major'] ]
+  - name: minor
+    value: $[ dependencies.setVersion.outputs['setvar.minor'] ]
+  - name: revision
+    # revision counter is automatically incremented by one in each execution of pipeline
+    # second parameter is seed value to reset to every time the referenced variable is changed
+    value: $[counter(dependencies.setVersion.outputs['setvar.revCounterName'], 0)]
+  - name: versionNumber
+    value: $(major).$(minor).0.0
+  - name: fileVersionNumber
+    value: $(major).$(minor).$(revision).0
+  - name: packageVersion
+    value: $(major).$(minor).$(revision)
+  - name: packageOutputPath
+    value: $(Build.ArtifactStagingDirectory)/packages
+  - name: outputPath
+    value: bin/$(buildConfiguration)
+
+  steps:
+  - task: PowerShell@2
+    name: setBuildName
+    inputs:
+      filePath: '.\setbuildname.ps1'
+
+  - task: NuGetToolInstaller@1
+    displayName: Install NuGet Tool
+
+  - task: NuGetCommand@2
+    displayName: Restore NuGet Packages
+    inputs:
+      command: 'restore'
+      restoreSolution: '$(solution)'
+      feedsToUse: 'select'
+      vstsFeed: 'a818d6da-f917-4eb0-bef1-c4c4780de3d1'
+
+  - task: Assembly-Info-NetFramework@2
+    displayName: Set Assembly Version
+    inputs:
+      Path: '$(Build.SourcesDirectory)'
+      FileNames: |
+        **\AssemblyInfo.cs
+        **\AssemblyInfo.vb
+      InsertAttributes: true
+      FileEncoding: 'auto'
+      WriteBOM: false
+      VersionNumber: '$(versionNumber)'
+      FileVersionNumber: '$(fileVersionNumber)'
+
+  - task: VSBuild@1
+    displayName: Build Solution
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+
+  - task: VSTest@2
+    displayName: Run Unit Tests
+    inputs:
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: |
+        **\*.tests.dll
+        !**\*TestAdapter.dll
+        !**\obj\**
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+    enabled: true
+
+  # COPY BUILD OUTPUT ARTIFACTS
+  - task: DeleteFiles@1
+    inputs:
+      SourceFolder: '$(Build.SourcesDirectory)/Database/flyway/drivers'
+      Contents: '!(mssql*.jar)'
+      
+  - task: CopyFiles@2
+    displayName: 'Copy Database Folder'
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/Database'
+      contents: |
+        **/*
+        !Templates/**/*
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/GTMSQL'
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Database Scripts'
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)/GTMSQL'
+      artifactName: GTMSQL

@@ -1,0 +1,1 @@
+INSERT INTO tmgPartnerType(PartnerTypeID,Description,EffDate,DeletedFlag,KeepDuringRollback) VALUES (1,'Primary','1/1/2003','N','N');

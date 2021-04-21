@@ -1,0 +1,14 @@
+Below is the current know mappings between database folders and the applications they are for. 
+If you need something that is not on the list please contact devLeadershipTeam@integrationpoint.com.
+
+Folder Name		Target Database			Standard dbconfig name, if any
+--------------------------------------------------------------------------------
+Application		Partner databases		<found via security db mapping>
+Security		security database		ftzweb:userauth
+ReportingServiceQueue		ReportingServiceQueue DB	Reporting:ReportQueue
+Content			Content DB			content:ContentData
+Gateway			ABI Gateway DB			abi:data
+USABI			US ABI Content			usabi:userauth
+Biblioteca		Biblioteca webservice		Biblioteca:write
+DTS_BATCH_QUEUE		DTS Batch DB			DTS:DTSBatchData
+usabiGateway		US ABI Transactions		usabigateway:data

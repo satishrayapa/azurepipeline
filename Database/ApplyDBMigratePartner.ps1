@@ -1,0 +1,1 @@
+ .\aws-db-migrate-partners.ps1 -server localhost -database SEC_TEST -user cicd_dbcreator -password cicd_dbcreator -sqlPath "Application\19.4" -partnerId 1010

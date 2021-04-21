@@ -1,0 +1,1 @@
+UPDATE tmgForm SET DeletedFlag = 'Y' WHERE FormGUID = 'fugDifUploadFiles_aspx' 

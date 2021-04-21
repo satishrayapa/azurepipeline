@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A26A13CA-3A2E-4927-9EB4-06E512EDF108}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DBUpgrade</RootNamespace>
+    <AssemblyName>DBUpgrade</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IntegrationPoint.CoreMini">
+      <HintPath>.\IntegrationPoint.CoreMini.dll</HintPath>
+      <IlMerge>True</IlMerge>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="dugEncryptDecrypt" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="dugSQL" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="dugUtilities" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="IntegrationPoint.Cache" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="IntegrationPoint.DataSanitizationHelper" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="IntegrationPoint.GTN.LogDatabase" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="IntegrationPoint.Library" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="IntegrationPoint.Sql" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="NDesk.Options">
+      <Version>0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="TR.OGT.Common" Version="20.4.*" GeneratePathProperty="true" />
+    <PackageReference Include="Newtonsoft.Json" GeneratePathProperty="true">
+      <Version>12.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="ilmerge" Version="3.0.29" GeneratePathProperty="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DBConnections.cs" />
+    <Compile Include="DevNullJournal.cs" />
+    <Compile Include="IPUpgradeEngineBuilder.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WriteOnlyJournal.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DBUpShared\DBUpShared.csproj">
+      <Project>{2be4da28-088b-4836-a5c4-dd1de1e91bf0}</Project>
+      <Name>DBUpShared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <!--<Import Project="$(MSBuildExtensionsPath)\Ilmerge.CSharp.targets" />-->
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+    <CreateItem Include="@(ReferencePath)" Condition="'%(CopyLocal)'=='true' and '%(ReferencePath.IlMerge)'=='true'">
+      <Output TaskParameter="Include" ItemName="IlmergeAssemblies" />
+    </CreateItem>
+    <ItemGroup>
+      <IlmergeAssemblies Include="$(PkgdugEncryptDecrypt)\lib\net472\dugEncryptDecrypt.dll" />
+      <IlmergeAssemblies Include="$(PkgdugSQL)\lib\net472\dugSQL.dll" />
+      <IlmergeAssemblies Include="$(PkgdugUtilities)\lib\net472\dugUtilities.dll" />
+      <IlmergeAssemblies Include="$(PkgIntegrationPoint_Cache)\lib\net472\IntegrationPoint.Cache.dll" />
+      <IlmergeAssemblies Include="$(PkgIntegrationPoint_GTN_LogDatabase)\lib\net472\IntegrationPoint.GTN.LogDatabase.dll" />
+      <IlmergeAssemblies Include="$(PkgIntegrationPoint_Library)\lib\net472\IntegrationPoint.Library.dll" />
+      <IlmergeAssemblies Include="$(PkgIntegrationPoint_Sql)\lib\net472\IntegrationPoint.Sql.dll" />
+      <IlmergeAssemblies Include="$(PkgIntegrationPoint_DataSanitizationHelper)\lib\net472\IntegrationPoint.DataSanitizationHelper.dll" />
+      <!--<IlmergeAssemblies Include="$(PkgNewtonsoft_Json)\lib\net45\Newtonsoft.Json.dll" />-->
+      <IlmergeAssemblies Include="$(OutputPath)\TR.OGT.Common.dll" />
+      <IlmergeAssemblies Include="$(OutputPath)\IP.ES.BulkLoader.dll" />
+      <IlmergeAssemblies Include="$(OutputPath)\IntegrationPoint.Network.dll" />
+      <IlmergeAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll" />
+      <!--<IlmergeAssemblies Include="$(PkgNewtonsoft_Json)\..\12.0.2\lib\net45\Newtonsoft.Json.dll" />-->
+      <IlmergeAssemblies Include="$(OutputPath)\Microsoft.Extensions.Configuration.Abstractions.dll" />
+      <IlmergeAssemblies Include="$(OutputPath)\DBUpShared.dll" />
+      <IlmergeAssemblies Include="$(OutputPath)\DBUp.dll" />
+      <IlmergeAssemblies Include="$(OutputPath)\NDesk.Options.dll" />
+    </ItemGroup>
+    <Delete Files="$(OutputPath)\TR.OGT.Common.pdb" />
+    <Delete Files="$(OutputPath)\DBUpShared.pdb" />
+    <Message Text="MERGING: @(IlmergeAssemblies-&gt;'%(Filename)')" Importance="High" />
+    <Exec Command="&quot;$(Pkgilmerge)\tools\net452\Ilmerge.exe&quot; /internalize /allowDup /closed /out:@(MainAssembly) /targetplatform:4.0 &quot;@(IntermediateAssembly)&quot; @(IlmergeAssemblies-&gt;'&quot;%(FullPath)&quot;', ' ')" />
+  </Target>
+</Project>
