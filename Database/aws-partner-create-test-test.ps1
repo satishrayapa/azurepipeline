@@ -28,7 +28,7 @@ Write-Host "Server: $server"
 #$partids
 $name = "tr"
 #Write-Host "##vso[task.setvariable variable=mypartids;]$partids"
-Write-Host "##vso[task.setvariable variable=mypartids;isOutput=true]$name"
+Write-Host "##vso[task.setvariable variable=mypartids;isOutput=true;]$name"
 #Write-Host "##vso[task.setvariable variable=testvar;]testvalue"
 #echo "##vso[task.setvariable variable=MYPARTIDS]$partids"
 Write-Host "================"
