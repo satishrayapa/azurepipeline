@@ -6,13 +6,9 @@
 name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 
 
-trigger:
-  branches:
-    include:
-    - feature/sathishk
-    exclude:
-    - master
-pool: 'AWS OGT Non-Prod Pool'
+pool:
+  vmImage: 'windows-latest'
+
 
 variables:
   - group: partnerid-variables-test
@@ -26,7 +22,7 @@ jobs:
     inputs:
       targetType: 'filePath'    
       filePath: 'Database/aws-partner-create-test-test.ps1'
-      arguments: -server $(sql.server) -database SEC_DEV -credSecretId $(sql.dbcreator.secret.id) -sqlPath Application -repair -outoforder -EngineType MSSQL
+      arguments: -server $(sql.server)
       errorActionPreference: 'stop'
 
 - job: partnerdb

@@ -5,7 +5,7 @@ $value = [Environment]::GetEnvironmentVariable("$Veriable")
 
 
 #Write-Host "$env:some"
-#Write-Host "variable value is = $(some)"
+Write-Host "------------$veriable)"
 #Write-Host "variable value is $stName"
 Write-Host "variable value is $value"
 #Write-Host "$env:some"
