@@ -29,8 +29,8 @@ jobs:
   displayName: 'partnerdbjob'
   dependsOn: getpartneridsjob
   variables: 
-      some: $[ dependencies.getpartneridsjob.outputs['partneridstask.name'] ]
-      #some: "hello"
+      #some: $[ dependencies.getpartneridsjob.outputs['partneridstask.name'] ]
+      some: "hello"
 
 
   steps:
