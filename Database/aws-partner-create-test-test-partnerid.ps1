@@ -7,7 +7,7 @@ Write-Host "========================="
 
 
 #Write-Host "$env:some"
-Write-Host "------------$BuildOnly)"
+Write-Host "------------$BuildOnly"
 #Write-Host "variable value is $stName"
 #Write-Host "variable value is $value"
 #Write-Host "$env:some"
