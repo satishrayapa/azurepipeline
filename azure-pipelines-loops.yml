@@ -15,7 +15,7 @@ jobs:
           #some: "hello"
       strategy:
         matrix:
-          $[ each project in $(StorageName)]:
+          $[ each project in $(StorageName) ]:
             hello: 
               PYTHON_VERSION: $project
           #  ${{ each project in parameters.params }}:
