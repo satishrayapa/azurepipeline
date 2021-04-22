@@ -15,7 +15,7 @@ jobs:
   strategy:
     matrix:
       - ${{ each project in parameters.params }}:
-          ${{ project.name }}
+          myversion:
             PYTHON_VERSION: ${{ project.key }}
 
       #Python35:
