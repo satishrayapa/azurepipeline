@@ -15,14 +15,14 @@ jobs:
           #some: "hello"
       strategy:
         matrix:
-          $[ each project in $(StorageName) ]:
-            hello: 
-              PYTHON_VERSION: $project
-          #  ${{ each project in parameters.params }}:
-          #     ${{ project.name }}:
-          #       PYTHON_VERSION: ${{ project.key }}
-          #     myversion2:
-          #       PYTHON_VERSION: ${{ project.key }}
+          # $[ each project in $(StorageName) ]:
+          #   hello: 
+          #     PYTHON_VERSION: $project
+           ${{ each project in parameters.params }}:
+              ${{ project.name }}:
+                PYTHON_VERSION: ${{ project.key }}
+              myversion2:
+                PYTHON_VERSION: ${{ project.key }}
 
           #Python35:
             #PYTHON_VERSION: '3.5'
