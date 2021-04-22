@@ -15,7 +15,6 @@ jobs:
           #some: "hello"
       strategy:
         matrix:
-
            ${{ each project in parameters.params }}:
               ${{ project.name }}:
                 PYTHON_VERSION: ${{ project.key }}
