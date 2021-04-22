@@ -2,7 +2,7 @@ parameters:
   params: []
 
 jobs:
-  - ${{ each project in parameters.params }}:
+  #- ${{ each project in parameters.params }}:
     - job: ${{ project.name}}
       #displayName: 'partnerdbjob'
       dependsOn: GetpartneridsJob
@@ -15,11 +15,11 @@ jobs:
           #some: "hello"
       strategy:
         matrix:
-          #- ${{ each project in parameters.params }}:
+           ${{ each project in parameters.params }}:
               myversion:
                 PYTHON_VERSION: ${{ project.key }}
-              myversion2:
-                PYTHON_VERSION: ${{ project.key }}
+              #myversion2:
+                #PYTHON_VERSION: ${{ project.key }}
 
           #Python35:
             #PYTHON_VERSION: '3.5'
