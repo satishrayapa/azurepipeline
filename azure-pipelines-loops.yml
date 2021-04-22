@@ -3,7 +3,7 @@ parameters:
 
 jobs:
   - ${{ each project in parameters.params }}:
-    - job: PartnerDb
+    - job: ${{ project.name}}
       #displayName: 'partnerdbjob'
       dependsOn: GetpartneridsJob
       variables: 
