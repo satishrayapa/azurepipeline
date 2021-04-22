@@ -2,40 +2,41 @@ parameters:
   params: []
 
 jobs:
-- job: PartnerDb
-  #displayName: 'partnerdbjob'
-  dependsOn: GetpartneridsJob
-  variables: 
-      StorageName: $[ dependencies.GetpartneridsJob.outputs['PartneridStask.StorageName'] ]
-      #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
-      #DeployResourceGroupName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.DeployResourceGroupName'] ]
+  - ${{ each project in parameters.params }}:
+    - job: PartnerDb
+      #displayName: 'partnerdbjob'
+      dependsOn: GetpartneridsJob
+      variables: 
+          StorageName: $[ dependencies.GetpartneridsJob.outputs['PartneridStask.StorageName'] ]
+          #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
+          #DeployResourceGroupName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.DeployResourceGroupName'] ]
 
 
-      #some: "hello"
-  strategy:
-    matrix:
-      - ${{ each project in parameters.params }}:
-          myversion:
-            PYTHON_VERSION: ${{ project.key }}
+          #some: "hello"
+      strategy:
+        matrix:
+          #- ${{ each project in parameters.params }}:
+              myversion:
+                PYTHON_VERSION: ${{ project.key }}
 
-      #Python35:
-        #PYTHON_VERSION: '3.5'
-      #Python36:
-        #PYTHON_VERSION: '3.6'
-    maxParallel: 1
+          #Python35:
+            #PYTHON_VERSION: '3.5'
+          #Python36:
+            #PYTHON_VERSION: '3.6'
+        maxParallel: 1
 
-  steps:
-  - task: PowerShell@2
-    #displayName: 'hellodisplay'
-    name: "hellojob" 
-    displayName: 'partneridstask'
-    inputs:
-      targetType: 'filePath'    
-      filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
-      arguments: >-
-        -BuildOnly '$(StorageName)'
-      #arguments: -Veriable $(some)
-      errorActionPreference: 'stop'
+      steps:
+      - task: PowerShell@2
+        #displayName: 'hellodisplay'
+        name: "hellojob" 
+        displayName: 'partneridstask'
+        inputs:
+          targetType: 'filePath'    
+          filePath: 'Database/aws-partner-create-test-test-partnerid.ps1'
+          arguments: >-
+            -BuildOnly '$(StorageName)'
+          #arguments: -Veriable $(some)
+          errorActionPreference: 'stop'
 
 
 #       ===========================================================================================
@@ -60,16 +61,16 @@ jobs:
 #       #filePath: 'deployment\Prepcicd.ps1'
 #       filePath: 'Database/aws-partner-create-test-test.ps1'
 #       errorActionPreference: 'stop'
-  
+
 
 # - job: DeployEnvironmentJob
 #   dependsOn: PrepareEnvironmentJob
 #   variables:
 #     StorageName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.StorageName'] ]
 #     #ContainerName: $[ dependencies.PrepareEnvironmentJob.outputs['PrepCicd.ContainerName'] ]
-  
+
 #   steps:
-  
+
 #   - task: PowerShell@2
 #     displayName: 'hellodisplay'
 #     name: "hellojob" # This will allow us to reference the output of this task somewhere else.
