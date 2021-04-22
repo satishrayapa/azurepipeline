@@ -18,6 +18,8 @@ jobs:
           #- ${{ each project in parameters.params }}:
               myversion:
                 PYTHON_VERSION: ${{ project.key }}
+              myversion2:
+                PYTHON_VERSION: ${{ project.key }}
 
           #Python35:
             #PYTHON_VERSION: '3.5'

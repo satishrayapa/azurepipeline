@@ -27,9 +27,12 @@ jobs:
 - template: azure-pipelines-loops.yml
   parameters:
     params:
-      - common-resourcelocator:
-        name: common-resourcelocator                                  # This is the name of the API hosted on Azure App Service. Note that this is also stored in Variable group. If we add/remove, we need to update there as well.
-        key: commonresourcelocator     
+      - common1:
+        name: common-1                                 # This is the name of the API hosted on Azure App Service. Note that this is also stored in Variable group. If we add/remove, we need to update there as well.
+        key: com   
+      - common2:
+        name: common-2                                 # This is the name of the API hosted on Azure App Service. Note that this is also stored in Variable group. If we add/remove, we need to update there as well.
+        key: commonre    
 
 
 
