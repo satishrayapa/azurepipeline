@@ -27,14 +27,14 @@ jobs:
 - template: azure-pipelines-loops.yml
 parameters:
     params:
-      $[ each project in $(partnerid) ]:
+      #- $[ each project in $(partnerid) ]:
         #- ${{ project.name }}:
-        - test:
-            name: $[ project ]
-            key: $[ project ]
-        # - common:
-        #   name: india                             # This is the name of the API hosted on Azure App Service. Note that this is also stored in Variable group. If we add/remove, we need to update there as well.
-        #   key: gandhi  
-        # - silent:
-        #   name: usa
-        #   key: lincon    
+        # - test:
+        #     name: $[ project ]
+        #     key: $[ project ]
+        - common:
+          name: india                             # This is the name of the API hosted on Azure App Service. Note that this is also stored in Variable group. If we add/remove, we need to update there as well.
+          key: gandhi  
+        - silent:
+          name: usa
+          key: lincon    
