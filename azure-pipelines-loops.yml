@@ -3,7 +3,7 @@
 parameters:
 - name: params
   type: object
-  default: []
+  default: [$[ dependencies.GetpartneridsJob.outputs['PartneridStask.StorageName'] ]]
 jobs:
   #- ${{ each project in parameters.params }}:
     - job: MyJobs

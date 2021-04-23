@@ -25,9 +25,9 @@ jobs:
       arguments: -server $(sql.server)
       errorActionPreference: 'stop'
 - template: azure-pipelines-loops.yml
-  parameters:
+  #parameters:
     #params: [ '$(partnerid)' ]
-    params: $[ dependencies.GetpartneridsJob.outputs['PartneridStask.StorageName'] ]
+    #params: [ $[ dependencies.GetpartneridsJob.outputs['PartneridStask.StorageName'] ],"hello" ]
   # parameters:
   #   params: 
   #   - common:
