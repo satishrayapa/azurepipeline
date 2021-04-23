@@ -26,7 +26,8 @@ jobs:
       errorActionPreference: 'stop'
 - template: azure-pipelines-loops.yml
   parameters:
-    params: [ '$(partnerid)' ]
+    #params: [ '$(partnerid)' ]
+    params: $[ dependencies.GetpartneridsJob.outputs['PartneridStask.StorageName'] ]
   # parameters:
   #   params: 
   #   - common:
