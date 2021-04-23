@@ -25,11 +25,11 @@ jobs:
       arguments: -server $(sql.server)
       errorActionPreference: 'stop'
 - template: azure-pipelines-loops.yml
-  parameters:
-    params: 
-    - common:
-      name: india                             # This is the name of the API hosted on Azure App Service. Note that this is also stored in Variable group. If we add/remove, we need to update there as well.
-      key: gandhi  
-    - silent:
-      name: usa
-      key: lincon    
+  # parameters:
+  #   params: 
+  #   - common:
+  #     name: india                             # This is the name of the API hosted on Azure App Service. Note that this is also stored in Variable group. If we add/remove, we need to update there as well.
+  #     key: gandhi  
+  #   - silent:
+  #     name: usa
+  #     key: lincon    

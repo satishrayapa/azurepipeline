@@ -13,11 +13,22 @@ jobs:
 
 
           #some: "hello"
+      # strategy:
+      #   matrix:
+      #      ${{ each project in parameters.params }}:
+      #         ${{ project.name }}:
+      #           PYTHON_VERSION: ${{ project.key }}
+      
+      
+
       strategy:
         matrix:
-           ${{ each project in parameters.params }}:
-              ${{ project.name }}:
-                PYTHON_VERSION: ${{ project.key }}
+           ${{ each project in variables['StorageName'] }}:
+              ${{ project }}:
+                PYTHON_VERSION: ${{ project }}
+
+
+      
               #myversion2:
                 #PYTHON_VERSION: ${{ project.key }}
 
