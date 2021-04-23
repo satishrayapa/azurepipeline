@@ -1,6 +1,9 @@
+# parameters:
+#   params: []
 parameters:
-  params: []
-
+- name: params
+  type: object
+  default: []
 jobs:
   #- ${{ each project in parameters.params }}:
     - job: MyJobs
